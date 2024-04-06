@@ -21,8 +21,7 @@ func (v Vector) Dot(o Vector) float64 {
 }
 
 func (v Vector) Normalize() Vector {
-	l := v.Length()
-	return Vector{v.X / l, v.Y / l, v.Z / l}
+	return v.DivideScalar(v.Length())
 }
 
 func (v Vector) Cross(ov Vector) Vector {
