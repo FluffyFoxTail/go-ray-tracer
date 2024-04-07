@@ -5,33 +5,34 @@ import "math"
 type Sphere struct {
 	Center Vector
 	Radius float64
+	Material
 }
 
-func (s *Sphere) Hit(r *Ray, tMin float64, tMax float64) (bool, HitRecord) {
+func (s *Sphere) Hit(r Ray, tMin float64, tMax float64) (bool, Hit) {
 	oc := r.Origin.Subtract(s.Center)
 	a := r.Direction.Dot(r.Direction)
 	b := 2.0 * oc.Dot(r.Direction)
 	c := oc.Dot(oc) - s.Radius*s.Radius
 	discriminant := b*b - 4*a*c
 
-	rec := HitRecord{}
+	hit := Hit{Material: s.Material}
 
 	if discriminant > 0.0 {
-		t := (-b - math.Sqrt(b*b-a*c)) / a
-		if t < tMax && t > tMin {
-			rec.T = t
-			rec.P = r.At(t)
-			rec.Normal = (rec.P.Subtract(s.Center)).DivideScalar(s.Radius)
-			return true, rec
+		temp := (-b - math.Sqrt(b*b-a*c)) / a
+		if temp < tMax && temp > tMin {
+			hit.T = temp
+			hit.Point = r.At(temp)
+			hit.Normal = (hit.Point.Subtract(s.Center)).DivideScalar(s.Radius)
+			return true, hit
 		}
 
-		t = (-b + math.Sqrt(b*b-a*c)) / a
-		if t < tMax && t > tMin {
-			rec.T = t
-			rec.P = r.At(t)
-			rec.Normal = (rec.P.Subtract(s.Center)).DivideScalar(s.Radius)
-			return true, rec
+		temp = (-b + math.Sqrt(b*b-a*c)) / a
+		if temp < tMax && temp > tMin {
+			hit.T = temp
+			hit.Point = r.At(temp)
+			hit.Normal = (hit.Point.Subtract(s.Center)).DivideScalar(s.Radius)
+			return true, hit
 		}
 	}
-	return false, rec
+	return false, Hit{}
 }
